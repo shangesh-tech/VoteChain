@@ -46,7 +46,6 @@ export default function RootLayout({ children }) {
           }}
         />
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
           <Header />
           <main className="relative pt-20">{children}</main>
         </div>
