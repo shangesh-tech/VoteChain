@@ -79,12 +79,10 @@ export default function CandidateCard({
             <div className="relative group">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 rounded-2xl flex items-center justify-center overflow-hidden transform transition-transform group-hover:scale-105">
                 {candidate.avatar ? (
-                  <Image
+                  <img
                     src={candidate.avatar || "/placeholder.svg"}
                     alt={candidate.name}
                     className="w-full h-full object-cover"
-                    width={80}
-                    height={80}
                   />
                 ) : (
                   <User className="w-10 h-10 text-gray-600 dark:text-gray-400" />

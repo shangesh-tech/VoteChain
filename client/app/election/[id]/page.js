@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, Clock, Users, CheckCircle, Share2, Bookmark, Eye, Lock, BarChart3 } from "lucide-react"
-import Image from "next/image"
 import CandidateCard from "@/components/candidate-card"
 import ElectionResults from "@/components/election-results"
 import useVoteChainStore from "@/store/contract-store"
@@ -269,12 +268,10 @@ export default function ElectionDetailPage() {
         {/* Election Header */}
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/20 dark:border-gray-700/20 mb-8">
           <div className="relative h-64 md:h-80 bg-gradient-to-r from-blue-500 to-purple-600">
-            <Image
+            <img
               src={election.image}
               alt={election.title}
               className="w-full h-full object-cover mix-blend-overlay"
-              width={800}
-              height={400}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6 md:p-8">
