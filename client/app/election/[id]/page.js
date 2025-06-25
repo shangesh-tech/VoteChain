@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, Clock, Users, CheckCircle, Share2, Bookmark, Eye, Lock, BarChart3 } from "lucide-react"
+import Image from "next/image"
 import CandidateCard from "@/components/candidate-card"
 import ElectionResults from "@/components/election-results"
 import useVoteChainStore from "@/store/contract-store"
@@ -91,7 +92,7 @@ export default function ElectionDetailPage() {
       }
     }
 
-  }, [params.id, fetchElectionDetails, account, checkIfUserVoted])
+  }, [params.id, fetchElectionDetails, account, checkIfUserVoted, isConnected])
 
   useEffect(() => {
     if (!election) return
@@ -215,7 +216,7 @@ export default function ElectionDetailPage() {
             <Eye className="w-12 h-12 text-gray-400" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Election not found</h3>
-          <p className="text-gray-500 dark:text-gray-400">The election you're looking for doesn't exist</p>
+          <p className="text-gray-500 dark:text-gray-400">The election you are looking for does not exist</p>
           <button
             onClick={() => router.push("/")}
             className="mt-4 inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -268,10 +269,12 @@ export default function ElectionDetailPage() {
         {/* Election Header */}
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/20 dark:border-gray-700/20 mb-8">
           <div className="relative h-64 md:h-80 bg-gradient-to-r from-blue-500 to-purple-600">
-            <img
+            <Image
               src={election.image}
               alt={election.title}
               className="w-full h-full object-cover mix-blend-overlay"
+              width={800}
+              height={400}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6 md:p-8">

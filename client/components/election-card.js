@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Clock, Users, Vote, TrendingUp, Bookmark, CheckCircle } from "lucide-react"
 import toast from "react-hot-toast"
 import useVoteChainStore from "@/store/contract-store"
@@ -79,10 +80,12 @@ export default function ElectionCard({ election }) {
       <Link href={`/election/${election.id}`}>
         <div className="p-6 pb-4 relative">
           <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-2xl mb-4 overflow-hidden">
-            <img
+            <Image
               src={election.image || "/placeholder.svg"}
               alt={election.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              width={400}
+              height={225}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
 
