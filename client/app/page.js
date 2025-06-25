@@ -19,12 +19,12 @@ export default function HomePage() {
     fetchElections,
     elections,
     loading,
-    error,
     account,
     createElection,
     contract,
     connectWallet,
-    totalElections
+    totalElections,
+    contractOwner
   } = useVoteChainStore()
 
   const [filteredElections, setFilteredElections] = useState([])
@@ -86,6 +86,11 @@ export default function HomePage() {
       return
     }
 
+    if (account.toLowerCase() !== contractOwner.toLowerCase()) {
+      toast.error("You are not the owner of the contract")
+      return
+    }
+
     try {
       const {
         title,
@@ -129,7 +134,7 @@ export default function HomePage() {
   const now = Math.floor(Date.now() / 1000)
   const activeElections = elections.filter((e) => Number(e.deadline) > now).length
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -227,7 +232,13 @@ export default function HomePage() {
                 toast.error("Please connect your wallet first")
                 connectWallet("metamask")
               } else {
-                setIsCreateModalOpen(true)
+                if (account.toLowerCase() !== contractOwner.toLowerCase()) {
+                  toast.error("You are not the owner of the contract")
+                  return
+                } else {
+                  toast.success("You are the owner of the contract")
+                  setIsCreateModalOpen(true)
+                }
               }
             }}
             className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-4 py-2 text-sm font-medium text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -253,7 +264,6 @@ export default function HomePage() {
                   deadline: Number(election.deadline) * 1000, // Convert to milliseconds
                   image: election.image,
                   totalVotes: election.totalVotes || 0,
-                  participants: 100, // Placeholder
                   category: "governance", // Default category
                   featured: index === 0,
                   trending: index < 2

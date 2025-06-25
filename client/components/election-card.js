@@ -128,10 +128,7 @@ export default function ElectionCard({ election }) {
                 <Clock className="w-4 h-4" />
                 <span>{timeLeft}</span>
               </div>
-              <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                <Users className="w-4 h-4" />
-                <span>{election.participants}</span>
-              </div>
+
             </div>
 
             {isElectionEnded && (

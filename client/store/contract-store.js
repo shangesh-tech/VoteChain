@@ -680,7 +680,6 @@ const useVoteChainStore = create((set, get) => ({
     chainId: null,
     wcProvider: null,
     loading: false,
-    error: null,
 
     // Basic state setters
     setLoading: (loading) => set({ loading }),
@@ -825,7 +824,7 @@ const useVoteChainStore = create((set, get) => ({
                                 account: newAddress,
                                 contract: newContract
                             });
-                            toast.success(`Account changed: ${newAddress}`);
+                            toast.success(`Account changed: ${newAddress.slice(0, 6)}...${newAddress.slice(-4)}`);
                             await get().loadContractData();
                         } catch (err) {
                             toast.error('Error updating after account change');
@@ -962,8 +961,8 @@ const useVoteChainStore = create((set, get) => ({
 
     loadContractData: async () => {
         try {
-            const { contract } = get();
-            if (!contract) return;
+            const { contract, account } = get();
+            if (!contract || !account) return;
 
             set({ loading: true, error: null });
 
@@ -972,6 +971,10 @@ const useVoteChainStore = create((set, get) => ({
                 contract.paused(),
                 contract.owner()
             ]);
+
+            if (owner.toLowerCase() == account.toLowerCase()) {
+                toast.success("Welcome back Admin/Owner");
+            }
 
             set({
                 totalElections: Number(totalElection),
@@ -990,7 +993,7 @@ const useVoteChainStore = create((set, get) => ({
     },
 
     // TheGraph queries
-    fetchElections: async (limit = 10) => {
+    fetchElections: async (limit = 100) => {
         try {
             set({ loading: true, error: null });
 
@@ -1017,6 +1020,8 @@ const useVoteChainStore = create((set, get) => ({
             const data = await request(GRAPH_API_URL, GET_ELECTION_DETAILS, {
                 electionId: electionId
             });
+
+            console.log("election details of ", electionId, data);
 
             // Process the data to create a structured election object
             if (!data || !data.electionCreateds || data.electionCreateds.length === 0) {

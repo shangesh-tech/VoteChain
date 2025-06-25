@@ -49,9 +49,7 @@ export default function ElectionDetailPage() {
           description: electionData.description,
           deadline: Number(electionData.deadline) * 1000, // Convert to milliseconds
           totalVotes: electionData.totalVotes || 0,
-          participants: 100, // Placeholder
-          views: 1000, // Placeholder
-          image: electionData.image || "/placeholder.svg?height=400&width=800",
+          image: electionData.image,
           category: "governance", // Default category
           trending: true,
           candidates: Array.isArray(electionData.candidates)
@@ -60,8 +58,7 @@ export default function ElectionDetailPage() {
               name: candidate.name,
               description: candidate.description,
               votes: parseInt(candidate.voteCount),
-              avatar: "/placeholder.svg?height=150&width=150",
-              platform: ["Policy", "Reform", "Innovation"].slice(0, Math.floor(Math.random() * 3) + 1),
+              avatar: "https://gravatar.com/avatar/c889e36b3da0d55fec2a8191a545f5c2?s=400&d=robohash&r=x"
             }))
             : []
         }
@@ -72,9 +69,6 @@ export default function ElectionDetailPage() {
         if (account) {
           const hasVoted = await checkIfUserVoted(params.id)
           setHasVoted(hasVoted)
-
-          // We don't have a way to know which candidate the user voted for
-          // in the current contract implementation
         }
 
       } catch (error) {
@@ -88,10 +82,15 @@ export default function ElectionDetailPage() {
       const bookmarks = JSON.parse(localStorage.getItem("bookmarkedElections") || "[]")
       setIsBookmarked(bookmarks.includes(Number(params.id)))
     }
-
-    if (params.id) {
-      loadElection()
+    if (!isConnected) {
+      toast.error("Please connect your wallet first")
+      return
+    } else {
+      if (params.id) {
+        loadElection()
+      }
     }
+
   }, [params.id, fetchElectionDetails, account, checkIfUserVoted])
 
   useEffect(() => {
@@ -320,16 +319,6 @@ export default function ElectionDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-green-50/50 dark:bg-green-900/10 rounded-xl p-4 flex items-center space-x-3">
-                <div className="bg-green-100 dark:bg-green-800/30 p-2 rounded-lg">
-                  <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Participants</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">{election.participants.toLocaleString()}</p>
-                </div>
-              </div>
-
               <div className="bg-purple-50/50 dark:bg-purple-900/10 rounded-xl p-4 flex items-center space-x-3">
                 <div className="bg-purple-100 dark:bg-purple-800/30 p-2 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -337,16 +326,6 @@ export default function ElectionDetailPage() {
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Total Votes</p>
                   <p className="font-semibold text-gray-900 dark:text-white">{election.totalVotes.toLocaleString()}</p>
-                </div>
-              </div>
-
-              <div className="bg-amber-50/50 dark:bg-amber-900/10 rounded-xl p-4 flex items-center space-x-3">
-                <div className="bg-amber-100 dark:bg-amber-800/30 p-2 rounded-lg">
-                  <Eye className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Views</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">{election.views.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -361,17 +340,8 @@ export default function ElectionDetailPage() {
 
         {/* Candidates Section */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold font-poppins text-gray-900 dark:text-white">Candidates</h2>
-            {!isConnected && !isElectionEnded && (
-              <div className="flex items-center text-amber-600 dark:text-amber-400 text-sm">
-                <Lock className="w-4 h-4 mr-1" />
-                Connect wallet to vote
-              </div>
-            )}
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {election.candidates.map((candidate) => (
               <CandidateCard
                 key={candidate.id}

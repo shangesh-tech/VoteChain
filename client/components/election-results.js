@@ -14,7 +14,7 @@ export default function ElectionResults({ election }) {
   const sortedCandidates = [...election.candidates].sort((a, b) => b.votes - a.votes)
   const winner = sortedCandidates[0]
   const totalVotes = election.totalVotes || election.candidates.reduce((sum, candidate) => sum + candidate.votes, 0)
-  const turnoutRate = election.participants > 0 ? (totalVotes / election.participants) * 100 : 0
+
 
   return (
     <div className="space-y-6">
@@ -53,9 +53,9 @@ export default function ElectionResults({ election }) {
               const percentage = totalVotes > 0 ? (candidate.votes / totalVotes) * 100 : 0
               const barColors = [
                 "bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-yellow-500/50", // Winner - Gold
-                "bg-gradient-to-r from-gray-400 to-gray-600 shadow-gray-500/50", // Second - Silver
-                "bg-gradient-to-r from-orange-400 to-orange-600 shadow-orange-500/50", // Third - Bronze
-                "bg-gradient-to-r from-blue-400 to-blue-600 shadow-blue-500/50", // Others - Blue
+                "bg-gradient-to-r from-orange-400 to-orange-600 shadow-orange-500/50", // Second - Silver
+                "bg-gradient-to-r from-blue-400 to-blue-600 shadow-blue-500/50", // Third - Bronze
+                "bg-gradient-to-r from-gray-400 to-gray-600 shadow-gray-500/50", // Others - Blue
               ]
 
               return (
@@ -89,20 +89,6 @@ export default function ElectionResults({ election }) {
                 </div>
               )
             })}
-          </div>
-
-          {/* Summary Stats */}
-          <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="text-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl hover:shadow-lg transition-all duration-300">
-              <Users className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-              <p className="text-3xl font-bold text-blue-600">{totalVotes.toLocaleString()}</p>
-              <p className="text-sm font-medium text-blue-600/80 mt-1">Total Votes</p>
-            </div>
-            <div className="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-2xl hover:shadow-lg transition-all duration-300">
-              <TrendingUp className="w-8 h-8 text-green-600 mx-auto mb-3" />
-              <p className="text-3xl font-bold text-green-600">{turnoutRate.toFixed(1)}%</p>
-              <p className="text-sm font-medium text-green-600/80 mt-1">Turnout Rate</p>
-            </div>
           </div>
         </div>
       </div>

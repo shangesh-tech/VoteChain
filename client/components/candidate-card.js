@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { User, CheckCircle, Crown, Medal, Award } from "lucide-react"
 import useVoteChainStore from "@/store/contract-store"
+import { toast } from "react-hot-toast"
 
 export default function CandidateCard({
   candidate,
@@ -25,11 +26,11 @@ export default function CandidateCard({
       case 1:
         return <Crown className="w-5 h-5 text-yellow-500" />
       case 2:
-        return <Medal className="w-5 h-5 text-gray-400" />
+        return <Medal className="w-5 h-5 text-orange-500" />
       case 3:
-        return <Award className="w-5 h-5 text-orange-500" />
+        return <Award className="w-5 h-5 text-blue-500" />
       default:
-        return null
+        return <Award className="w-5 h-5 text-gray-500" />
     }
   }
 
@@ -38,16 +39,19 @@ export default function CandidateCard({
       case 1:
         return "border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20"
       case 2:
-        return "border-gray-300 bg-gray-50 dark:bg-gray-800/50"
+        return "border-orange-300 bg-orange-50 dark:bg-orange-800/50"
       case 3:
-        return "border-orange-300 bg-orange-50 dark:bg-orange-900/20"
+        return "border-blue-300 bg-blue-50 dark:bg-blue-900/20"
       default:
         return "border-gray-200 dark:border-gray-700"
     }
   }
 
   const handleVote = async () => {
-    if (!isConnected) return
+    if (!isConnected) {
+      toast.error("Please connect your wallet first")
+      return
+    }
     if (hasVoted) return
     if (isElectionEnded) return
 
@@ -113,17 +117,6 @@ export default function CandidateCard({
               </div>
 
               <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{candidate.description}</p>
-
-              {/* Platform Tags */}
-              {candidate.platform && (
-                <div className="flex flex-wrap gap-2">
-                  {candidate.platform.slice(0, 3).map((item, index) => (
-                    <span key={index} className="px-3 py-1 rounded-full text-xs border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              )}
 
               {/* Results - Only show if election ended */}
               {showResults && (
