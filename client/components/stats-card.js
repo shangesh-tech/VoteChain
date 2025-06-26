@@ -1,5 +1,3 @@
-"use client"
-
 import { TrendingUp, TrendingDown } from "lucide-react"
 
 export default function StatsCard({ icon, title, value, change, changeType }) {

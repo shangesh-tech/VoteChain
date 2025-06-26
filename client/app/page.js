@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Plus, TrendingUp, Users, Search, Award, Shield } from "lucide-react"
 import ElectionCard from "@/components/election-card"
-import CreateElectionModal from "@/components/create-election-modal"
+import dynamic from "next/dynamic"
 import StatsCard from "@/components/stats-card"
 import useVoteChainStore from "@/store/contract-store"
 import toast from "react-hot-toast"
@@ -13,6 +13,21 @@ const categories = [
   { id: "active", name: "Active", color: "bg-green-500" },
   { id: "ended", name: "Ended", color: "bg-red-500" }
 ]
+
+const CreateElectionModal = dynamic(
+  () => import("@/components/create-election-modal"),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 dark:border-gray-700/20 rounded-lg shadow-xl p-6 m-4">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-center mt-2">Loading...</p>
+        </div>
+      </div>
+    ),
+    ssr: false
+  }
+)
 
 export default function HomePage() {
   const {
@@ -122,14 +137,9 @@ export default function HomePage() {
     }
   }
 
-  // Calculate totals from actual data
   const totalVotes = elections.reduce((sum, election) => {
-    // For TheGraph data, we don't have vote counts directly
-    // This would require additional queries or contract calls
     return sum + (election.totalVotes || 0)
   }, 0)
-
-  const totalParticipants = elections.length > 0 ? elections.length * 100 : 0 // Placeholder
 
   const now = Math.floor(Date.now() / 1000)
   const activeElections = elections.filter((e) => Number(e.deadline) > now).length

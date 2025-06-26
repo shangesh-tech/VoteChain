@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Moon, Sun, Wallet, LogOut, User, Settings, ChevronDown } from "lucide-react"
+import { Moon, Sun, Wallet, LogOut, User, ChevronDown } from "lucide-react"
 import { useTheme } from "@/store/theme-store"
 import useVoteChainStore from "@/store/contract-store"
 import toast from "react-hot-toast"
@@ -14,7 +14,6 @@ export default function Header() {
     account,
     connectWallet,
     disconnectWallet,
-    provider,
     chainId
   } = useVoteChainStore()
 
@@ -79,15 +78,15 @@ export default function Header() {
           >
             <Sun
               className={`w-5 h-5 ${theme === 'light'
-                  ? 'text-yellow-500'
-                  : 'text-gray-400 dark:text-gray-500'
+                ? 'text-yellow-500'
+                : 'text-gray-400 dark:text-gray-500'
                 } transition-all duration-300 ${theme === 'dark' ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
                 } absolute inset-0 m-auto`}
             />
             <Moon
               className={`w-5 h-5 ${theme === 'dark'
-                  ? 'text-blue-300'
-                  : 'text-gray-400'
+                ? 'text-blue-300'
+                : 'text-gray-400'
                 } transition-all duration-300 ${theme === 'light' ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
                 } absolute inset-0 m-auto`}
             />
@@ -110,15 +109,6 @@ export default function Header() {
                 <div className="absolute right-0 mt-2 w-48 origin-top-right divide-y divide-gray-100 dark:divide-gray-800 rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none">
                   <div className="py-2 px-3 text-xs text-gray-500 dark:text-gray-400">Connected to {chainId ? `Chain ID: ${chainId}` : "blockchain"}</div>
                   <div className="py-1">
-                    <button
-                      onClick={() => {
-                        setDropdownOpen(false)
-                      }}
-                      className="flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </button>
                     <button
                       onClick={handleDisconnect}
                       className="flex w-full items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"

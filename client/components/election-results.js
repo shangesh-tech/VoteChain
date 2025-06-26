@@ -1,4 +1,3 @@
-"use client"
 
 import { BarChart3, Trophy, Users, TrendingUp } from "lucide-react"
 

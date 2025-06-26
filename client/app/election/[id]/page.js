@@ -2,11 +2,24 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Clock, Users, CheckCircle, Share2, Bookmark, Eye, Lock, BarChart3 } from "lucide-react"
+import { ArrowLeft, Clock, CheckCircle, Share2, Bookmark, Eye, BarChart3 } from "lucide-react"
 import CandidateCard from "@/components/candidate-card"
-import ElectionResults from "@/components/election-results"
+import dynamic from "next/dynamic"
 import useVoteChainStore from "@/store/contract-store"
 import toast from "react-hot-toast"
+
+const ElectionResults = dynamic(
+  () => import("@/components/election-results"),
+  {
+    loading: () => (
+      <div className="rounded-xl overflow-hidden shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/20 p-6">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="text-center mt-2">Loading results...</p>
+      </div>
+    ),
+    ssr: false
+  }
+)
 
 export default function ElectionDetailPage() {
   const params = useParams()
@@ -42,7 +55,6 @@ export default function ElectionDetailPage() {
           return
         }
 
-        // Transform the data to match the component's expected format
         const formattedElection = {
           id: electionData.id,
           title: electionData.name,
