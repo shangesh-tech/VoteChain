@@ -681,14 +681,9 @@ const useVoteChainStore = create((set, get) => ({
     wcProvider: null,
     loading: false,
 
-    // Basic state setters
-    setLoading: (loading) => set({ loading }),
-    setError: (error) => set({ error }),
-    setElections: (elections) => set({ elections }),
-
     executeContractCall: async (operationType, operation, ...args) => {
         try {
-            set({ loading: true, error: null });
+            set({ loading: true });
             const tx = await operation(...args);
             await tx.wait();
             await get().loadContractData();
@@ -707,7 +702,7 @@ const useVoteChainStore = create((set, get) => ({
 
     connectWallet: async (walletType) => {
         try {
-            set({ loading: true, error: null });
+            set({ loading: true });
             let rawProvider = null;
             let ethersProvider = null;
 
@@ -717,6 +712,7 @@ const useVoteChainStore = create((set, get) => ({
                         rawProvider = window.ethereum;
                         await rawProvider.request({ method: 'eth_requestAccounts' });
                         toast.success('Connected to MetaMask successfully!');
+                        set({ loading: false });
                     } else {
                         window.open('https://metamask.io/download/', '_blank');
                         toast.error('Please install MetaMask');
@@ -734,6 +730,8 @@ const useVoteChainStore = create((set, get) => ({
                                     rawProvider = window.ethereum;
                                     await rawProvider.request({ method: 'eth_requestAccounts' });
                                     toast.success('Connected to Brave Wallet successfully!');
+                                    set({ loading: false });
+
                                 } else {
                                     toast.error('Enable Brave Wallet in your browser settings');
                                     setTimeout(() => {
@@ -784,17 +782,21 @@ const useVoteChainStore = create((set, get) => ({
                         }
                         await rawProvider.connect();
                         toast.success('Connected via WalletConnect');
+                        set({ loading: false });
+
                     } catch (error) {
                         console.error('WalletConnect initialization failed:', error);
                         toast.error('Failed to Connect, Try Again...');
-                        set({ loading: false, error: 'WalletConnect initialization failed' });
+                        set({ loading: false });
+
                         return;
                     }
                     break;
 
                 default:
                     toast.error('Unsupported wallet type');
-                    set({ loading: false, error: 'Unsupported wallet type' });
+                    set({ loading: false });
+
                     return;
             }
 
@@ -947,15 +949,14 @@ const useVoteChainStore = create((set, get) => ({
                 contractOwner: null,
                 isPaused: false,
                 wcProvider: null,
-                loading: false,
-                error: null
+                loading: false
             });
 
             toast.success('Wallet disconnected');
         } catch (error) {
             console.error('Disconnect failed:', error);
             toast.error(error.message || 'Failed to disconnect wallet');
-            set({ error: error.message || 'Failed to disconnect wallet' });
+            set({ loading: false });
         }
     },
 
@@ -964,7 +965,7 @@ const useVoteChainStore = create((set, get) => ({
             const { contract, account } = get();
             if (!contract || !account) return;
 
-            set({ loading: true, error: null });
+            set({ loading: true });
 
             const [totalElection, isPaused, owner] = await Promise.all([
                 contract.totalElection(),
@@ -988,14 +989,14 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to load contract data:', error);
             toast.error('Failed to load contract data');
-            set({ loading: false, error: 'Failed to load contract data' });
+            set({ loading: false });
         }
     },
 
     // TheGraph queries
     fetchElections: async (limit = 100) => {
         try {
-            set({ loading: true, error: null });
+            set({ loading: true });
 
             const data = await request(GRAPH_API_URL, GET_ELECTIONS, { first: limit });
             set({
@@ -1007,7 +1008,6 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to fetch elections:', error);
             set({
-                error: error.message || 'Failed to fetch elections',
                 loading: false
             });
         }
@@ -1015,7 +1015,7 @@ const useVoteChainStore = create((set, get) => ({
 
     fetchElectionDetails: async (electionId) => {
         try {
-            set({ loading: true, error: null });
+            set({ loading: true });
 
             const data = await request(GRAPH_API_URL, GET_ELECTION_DETAILS, {
                 electionId: electionId
@@ -1058,7 +1058,6 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to fetch election details:', error);
             set({
-                error: error.message || 'Failed to fetch election details',
                 loading: false
             });
             return null;
@@ -1067,7 +1066,7 @@ const useVoteChainStore = create((set, get) => ({
 
     fetchUserVotes: async (userAddress) => {
         try {
-            set({ loading: true, error: null });
+            set({ loading: true });
 
             const data = await request(GRAPH_API_URL, GET_USER_VOTES, {
                 userAddress: userAddress
@@ -1078,7 +1077,6 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to fetch user votes:', error);
             set({
-                error: error.message || 'Failed to fetch user votes',
                 loading: false
             });
         }
@@ -1086,7 +1084,7 @@ const useVoteChainStore = create((set, get) => ({
 
     fetchRecentVotes: async (electionId, limit = 10) => {
         try {
-            set({ loading: true, error: null });
+            set({ loading: true });
 
             const data = await request(GRAPH_API_URL, GET_RECENT_VOTES, {
                 electionId: electionId,
@@ -1102,7 +1100,6 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to fetch recent votes:', error);
             set({
-                error: error.message || 'Failed to fetch recent votes',
                 loading: false
             });
         }
@@ -1166,7 +1163,7 @@ const useVoteChainStore = create((set, get) => ({
                 return null;
             }
 
-            set({ loading: true, error: null });
+            set({ loading: true });
             const election = await contract.getElection(electionId);
             set({ loading: false });
 
@@ -1174,7 +1171,7 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to get election:', error);
             toast.error('Failed to get election details');
-            set({ loading: false, error: 'Failed to get election details' });
+            set({ loading: false });
             return null;
         }
     },
@@ -1187,7 +1184,7 @@ const useVoteChainStore = create((set, get) => ({
                 return null;
             }
 
-            set({ loading: true, error: null });
+            set({ loading: true });
             const result = await contract.getElectionResult(electionId);
             set({ loading: false });
 
@@ -1195,7 +1192,7 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to get election result:', error);
             toast.error('Failed to get election result');
-            set({ loading: false, error: 'Failed to get election result' });
+            set({ loading: false });
             return null;
         }
     },
@@ -1274,7 +1271,7 @@ const useVoteChainStore = create((set, get) => ({
                 return false;
             }
 
-            set({ loading: true, error: null });
+            set({ loading: true });
 
             // Fetch the user's votes
             const data = await request(GRAPH_API_URL, GET_USER_VOTES, {
@@ -1291,7 +1288,6 @@ const useVoteChainStore = create((set, get) => ({
         } catch (error) {
             console.error('Failed to check if user voted:', error);
             set({
-                error: error.message || 'Failed to check voting status',
                 loading: false
             });
             return false;
